@@ -1,0 +1,18 @@
+
+# ==== Parameters ====
+# Required:
+# ipv4local -- it must be white static ip address
+# ipv6tun -- ipv6 address from tun provider
+# ipv6local -- local ipv6 address - it will be using as gateway for hosts behind 6to4 gateway
+# tungateway -- ipv4 gateway from tun provider
+# ipv6prefix -- ipv6 subnet prefix from tun provider
+# netmask -- netmask for ipv6tun address
+# 6to4 generator: https://debian6to4.gielen.name/index.php
+
+# Optional:
+# subnetmask -- default is '64'. Subnet mask for ipv6 subnet.
+
+# ==== Example ====
+# __6to4 6to4 --ipv4local 101.121.202.121 --ipv6tun '2002:6579:ca79::1' --ipv6local '2002:6579:ca79::2' --tungateway '::192.88.99.1' --ipv6prefix '2002:6579:ca79::' --netmask 16 --subnetmask 48
+
+

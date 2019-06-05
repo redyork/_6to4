@@ -1,0 +1,51 @@
+#!/bin/sh -e
+
+name=$__object_id
+os=$(cat "$__global/explorer/os")
+os_version=$(cat "$__global/explorer/os_version")
+
+ipv4local=$(cat "$__object/parameter/ipv4local")
+ipv6local=$(cat "$__object/parameter/ipv6local")
+
+if [ -f "$__object/parameter/netmask" ]; then
+    netmask=$(cat "$__object/parameter/netmask")
+else
+    netmask="64"
+fi
+
+
+
+case "$os" in
+    ubuntu|debian|devuan)
+
+	echo 'ifdown tun6to4'
+	echo 'ifup tun6to4'
+	echo 'sysctl -p'
+
+	v4var='$(ip -o addr|grep "'${ipv4local}'"| grep -v "::" |awk '"'{print \$2}')"
+
+	cat <<EOF
+	    v4interface="${v4var}"; \
+	    if [ -z "\$v4interface" ]; then \
+	      echo 'WARNING: Local ipv4 interface not found. Can not add local ipv6 address.'; exit 1; \
+	    else \
+	      echo "# Gateway for local ipv6 hosts" >> /etc/network/interfaces.d/tun6to4 ; \
+	      echo "iface \$v4interface inet6 static" >> /etc/network/interfaces.d/tun6to4 ; \
+	      echo "address ${ipv6local}" >> /etc/network/interfaces.d/tun6to4 ; \
+	      echo "netmask ${netmask}" >> /etc/network/interfaces.d/tun6to4 ; \
+	    fi
+	    ip -6 a add ${ipv6local} dev \$v4interface
+EOF
+
+    ;;
+   *)
+      echo "Your operating system ($os) is currently not supported by this type (${__type##*/})." >&2
+      echo "Please contribute an implementation for it if you can." >&2
+      exit 1
+   ;;
+esac
+
+
+
+
+

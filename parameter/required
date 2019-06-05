@@ -1,0 +1,6 @@
+ipv4local
+ipv6local
+ipv6tun
+tungateway
+ipv6prefix
+netmask
